@@ -1,7 +1,5 @@
 <?php
-const rootDir = '/home/multistream6/domains/dashboard.ecoequitybank.com/public_html/';
-require '../include/vendor/autoload.php';
-require rootDir . 'include/vendor/autoload.php';
+require __DIR__ . '/../../include/vendor/autoload.php';
 ob_start();
 // session_start();
 require_once ('../session.php');

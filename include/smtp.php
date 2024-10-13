@@ -1,6 +1,5 @@
 <?php
-const rootDir = '/home/multistream6/domains/dashboard.ecoequitybank.com/public_html/';
-require rootDir . 'include/vendor/autoload.php';
+require __DIR__. '/../include/vendor/autoload.php';
 
 
 use PHPMailer\PHPMailer\PHPMailer;

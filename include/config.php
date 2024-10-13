@@ -1,9 +1,9 @@
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
-define("WEB_TITLE","Eco Equity Bank"); // Change Bank Name
-define("WEB_URL","https://dashboard.ecoequitybank.com"); // Change No "/" Ending splash
-define("WEB_EMAIL","contact@ecoequitybank.com"); // Change Your Website Email
+define("WEB_TITLE","Ukraine Gas Bank"); // Change Bank Name
+define("WEB_URL","https://dashboard.ukrgb.online"); // Change No "/" Ending splash
+define("WEB_EMAIL","contact@ukrgb.online"); // Change Your Website Email
 
 $web_url = WEB_URL;
 function support_plugin(){
