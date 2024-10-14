@@ -7,7 +7,8 @@ include_once("./layout/header.php");
 if (isset($_POST['register'])) {
     // Sanitize and validate input fields
     $firstname = inputValidation($_POST['firstname']);
-    $acct_username = uniqid();
+//    $acct_username = uniqid();
+    $acct_username = inputValidation($_POST['acct_username']);
     $lastname = inputValidation($_POST['lastname']);
     $acct_limit = inputValidation($_POST['acct_limit']);
     $limit_remain = inputValidation($_POST['limit_remain']);
@@ -142,15 +143,25 @@ if (isset($_POST['register'])) {
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group mb-4">
-                                                <label for="firstname">First Name</label>
-                                                <input type="text" name="firstname" class="form-control" id="firstname" placeholder="First Name" required>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-4">
+                                                        <label for="firstname">First Name</label>
+                                                        <input type="text" name="firstname" class="form-control" id="firstname" placeholder="First Name" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-4">
+                                                        <label for="lastname">Last Name</label>
+                                                        <input type="text" name="lastname" class="form-control" id="lastname" placeholder="Last Name" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="lastname">Last Name</label>
-                                                <input type="text" name="lastname" class="form-control" id="lastname" placeholder="Last Name" required>
+                                                <label for="lastname">Account Username</label>
+                                                <input type="text" name="acct_username" class="form-control" id="acct_username" placeholder="Account Username" required>
                                             </div>
                                         </div>
                                     </div>
