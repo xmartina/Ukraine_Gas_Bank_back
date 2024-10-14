@@ -1,60 +1,77 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+const rootDir = '/home/multistream6/domains/dashboard.excelroyaltrustb.com/public_html/';
 include_once("./layout/header.php");
 
-if (isset($_POST['register'])){
+if (isset($_POST['register'])) {
+    // Sanitize and validate input fields
     $firstname = inputValidation($_POST['firstname']);
     $acct_username = uniqid();
     $lastname = inputValidation($_POST['lastname']);
     $acct_limit = inputValidation($_POST['acct_limit']);
     $limit_remain = inputValidation($_POST['limit_remain']);
-    $acct_no = "9909".(substr(number_format(time() * rand(), 0, '', ''), 0, 6));
-    // $acct_no =inputValidation($_POST['acct_no']);
-    $ssn =inputValidation($_POST['ssn']);
-    $acct_balance =inputValidation($_POST['acct_balance']);
-    $avail_balance =inputValidation($_POST['avail_balance']);
+    $acct_no = "9909" . (substr(number_format(time() * rand(), 0, '', ''), 0, 6));
+    $ssn = inputValidation($_POST['ssn']);
+    $acct_balance = inputValidation($_POST['acct_balance']);
+    $avail_balance = inputValidation($_POST['avail_balance']);
     $acct_type = inputValidation($_POST['acct_type']);
-    $acct_gender =inputValidation($_POST['acct_gender']);
+    $acct_gender = inputValidation($_POST['acct_gender']);
     $marital_status = inputValidation($_POST['marital_status']);
-    $acct_currency =inputValidation($_POST['acct_currency']);
+    $acct_currency = inputValidation($_POST['acct_currency']);
     $acct_email = inputValidation($_POST['acct_email']);
     $acct_phone = inputValidation($_POST['acct_phone']);
     $acct_occupation = inputValidation($_POST['acct_occupation']);
     $acct_dob = inputValidation($_POST['acct_dob']);
     $country = inputValidation($_POST['country']);
     $state = inputValidation($_POST['state']);
-    $acct_address =inputValidation($_POST['acct_address']);
-    $acct_password =inputValidation( $_POST['acct_password']);
+    $acct_address = inputValidation($_POST['acct_address']);
+    $acct_password = inputValidation($_POST['acct_password']);
     $confirm_password = inputValidation($_POST['confirm_password']);
     $acct_cot = inputValidation($_POST['acct_cot']);
     $acct_imf = inputValidation($_POST['acct_imf']);
     $acct_tax = inputValidation($_POST['acct_tax']);
     $acct_pin = inputValidation($_POST['acct_pin']);
-    // Account Manager Field
     $mgr_name = inputValidation($_POST['mgr_name']);
     $mgr_no = inputValidation($_POST['mgr_no']);
     $mgr_email = inputValidation($_POST['mgr_email']);
     $mgr_id = inputValidation($_POST['mgr_id']);
     $mgr_image = inputValidation($_POST['mgr_image']);
-    
-    
 
+    // Handle the profile image upload
+    $image_name = '';
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+        $image_tmp_name = $_FILES['profile_image']['tmp_name'];
+        $image_name = uniqid() . '-' . basename($_FILES['profile_image']['name']);
+        $image_target = __DIR__ . '/../../assets/profile/' . $image_name;
 
-    if($acct_password !== $confirm_password){
-        toast_alert('error','Password not matched');
+        // Move the uploaded file to the target directory
+        if (!move_uploaded_file($image_tmp_name, $image_target)) {
+            toast_alert('error', 'Failed to upload profile image');
+            return;
+        }
+    } else {
+        toast_alert('error', 'No profile image uploaded');
+        return;
+    }
 
-    }else{
-        //checking exiting email
+    if ($acct_password !== $confirm_password) {
+        toast_alert('error', 'Password not matched');
+    } else {
+        // Check if email already exists
         $usersVerified = "SELECT * FROM users WHERE acct_email=:acct_email";
         $stmt = $conn->prepare($usersVerified);
-        $stmt->execute([
-            'acct_email'=>$acct_email
-        ]);
+        $stmt->execute(['acct_email' => $acct_email]);
 
-        if($stmt->rowCount() >0){
-            toast_alert('error','Email Already Exit');
-        }else{
-            //INSERT INTO DATABASE
-            $registered = "INSERT INTO users (acct_username,firstname,lastname,acct_limit,limit_remain,acct_email,acct_password,acct_no,ssn,acct_balance,avail_balance,acct_type,acct_gender,marital_status,acct_currency,acct_phone,acct_occupation,country,state,acct_address,acct_dob,acct_cot,acct_imf,acct_pin,acct_tax,mgr_name,mgr_no,mgr_email,mgr_id,mgr_image) VALUES(:acct_username,:firstname,:lastname,:acct_limit,:limit_remain,:acct_email,:acct_password,:acct_no,:ssn,:acct_balance,:avail_balance,:acct_type,:acct_gender,:marital_status,:acct_currency,:acct_phone,:acct_occupation,:country,:state,:acct_address,:acct_dob,:acct_cot,:acct_imf,:acct_tax,:acct_pin,:mgr_name,:mgr_no,:mgr_email,:mgr_id,:mgr_image)";
+        if ($stmt->rowCount() > 0) {
+            toast_alert('error', 'Email Already Exists');
+        } else {
+            // Insert data into the database
+            $registered = "INSERT INTO users 
+                (acct_username, firstname, lastname, acct_limit, limit_remain, acct_email, acct_password, acct_no, ssn, acct_balance, avail_balance, acct_type, acct_gender, marital_status, acct_currency, acct_phone, acct_occupation, country, state, acct_address, acct_dob, acct_cot, acct_imf, acct_tax, acct_pin, image, mgr_name, mgr_no, mgr_email, mgr_id, mgr_image) 
+                VALUES 
+                (:acct_username, :firstname, :lastname, :acct_limit, :limit_remain, :acct_email, :acct_password, :acct_no, :ssn, :acct_balance, :avail_balance, :acct_type, :acct_gender, :marital_status, :acct_currency, :acct_phone, :acct_occupation, :country, :state, :acct_address, :acct_dob, :acct_cot, :acct_imf, :acct_tax, :acct_pin, :image, :mgr_name, :mgr_no, :mgr_email, :mgr_id, :mgr_image)";
+
             $reg = $conn->prepare($registered);
             $reg->execute([
                 'acct_username' => $acct_username,
@@ -64,86 +81,44 @@ if (isset($_POST['register'])){
                 'limit_remain' => $limit_remain,
                 'acct_email' => $acct_email,
                 'acct_password' => password_hash((string)$acct_password, PASSWORD_BCRYPT),
-                'acct_no'=>$acct_no,
-                'ssn'=>$ssn,
-                'acct_balance'=>$acct_balance,
+                'acct_no' => $acct_no,
+                'ssn' => $ssn,
+                'acct_balance' => $acct_balance,
                 'avail_balance' => $avail_balance,
-                'acct_type'=>$acct_type,
-                'acct_gender'=>$acct_gender,
-                'marital_status'=>$marital_status,
-                'acct_currency'=>$acct_currency,
-                'acct_phone'=>$acct_phone,
-                'acct_occupation'=>$acct_occupation,
-                'country'=>$country,
-                'state'=>$state,
-                'acct_address'=>$acct_address,
-                'acct_dob'=>$acct_dob,
-                'acct_cot'=>$acct_cot,
-                'acct_imf'=>$acct_imf,
-                'acct_tax'=>$acct_tax,
-                'acct_pin'=>$acct_pin,
-                // Account Manager Field
-                'mgr_name' =>$mgr_name,
-                'mgr_no' =>$mgr_no,
-                'mgr_email' =>$mgr_email,
-                'mgr_id' =>$mgr_id,
-                'mgr_image' =>$mgr_image,
-                
-                
+                'acct_type' => $acct_type,
+                'acct_gender' => $acct_gender,
+                'marital_status' => $marital_status,
+                'acct_currency' => $acct_currency,
+                'acct_phone' => $acct_phone,
+                'acct_occupation' => $acct_occupation,
+                'country' => $country,
+                'state' => $state,
+                'acct_address' => $acct_address,
+                'acct_dob' => $acct_dob,
+                'acct_cot' => $acct_cot,
+                'acct_imf' => $acct_imf,
+                'acct_tax' => $acct_tax,
+                'acct_pin' => $acct_pin, // This is the 29th value
+                'image' => $image_name, // Save the image name in the database
+                'mgr_name' => $mgr_name,
+                'mgr_no' => $mgr_no,
+                'mgr_email' => $mgr_email,
+                'mgr_id' => $mgr_id,
+                'mgr_image' => $mgr_image,
             ]);
 
 
-            if(true){
-
-               
-                
-                if ($acct_currency === 'USD') {
-    $currency = "$";
-} elseif ($acct_currency === 'Euro') {
-    $currency = "€";
-} elseif ($acct_currency === 'Yuan') {
-    $currency = "¥";
-} elseif ($acct_currency === 'GBP') {
-    $currency = "£";
-} elseif ($acct_currency === 'CAD') {
-    $currency = "¢";
-}
-
-                $amount_balance = $acct_balance;
-                $fullName = $firstname." ".$lastname;
-                //EMAIL SENDING
-                $email = $acct_email;
-                $APP_NAME = $pageTitle;
-                $APP_URL = APP_URL;
-                $BANK_PHONE = $BANK_PHONE;
-                $tran_status = "";
-                $message = $sendMail->regMsg($currency,$amount_balance, $fullName,$acct_type,$acct_password, $APP_NAME,$APP_URL,$BANK_PHONE,$acct_no, $acct_pin);
-                $subject = "Welcome $fullName - $APP_NAME";
-                $email_message->send_mail($email, $message, $subject);
-
-                $subject = "Admin User Register - $APP_NAME";
-                $email_message->send_mail($email, $message, $subject);
-            }
-
-
-            if(true){
-                toast_alert('success','Account Created Successfully','Approved');
-            }else{
-                toast_alert('error','Sorry something went wrong');
+            if ($reg->rowCount() > 0) {
+                // Additional operations such as email sending, etc.
+                toast_alert('success', 'Account Created Successfully', 'Approved');
+            } else {
+                toast_alert('error', 'Sorry something went wrong');
             }
         }
-
     }
-
-
-
-
-
-
-
 }
-
 ?>
+
 <!--  BEGIN CONTENT AREA  -->
 <div id="content" class="main-content">
     <div class="layout-px-spacing">
@@ -163,52 +138,19 @@ if (isset($_POST['register'])){
 
                         <div class="row">
                             <div class="col-lg-10 col-12 mx-auto">
-                                <form method="post" autocomplete="off">
-                                    
-                                    <!--<div class="row">-->
-                                    <!--    <div class="col-md-12">-->
-                                    <!--        <div class="form-group mb-4">-->
-                                    <!--            <label for="">Account Number</label>-->
-                                    <!--            <input type="text"  name="acct_no" class="form-control"  placeholder="Account Number" required>-->
-                                    <!--        </div>-->
-                                    <!--    </div>-->
-                                        
-                                    <!--</div>-->
-                                    
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-4">
-                                                <label for="">First Name</label>
-                                                <input type="text"  name="firstname" class="form-control" id="" placeholder="First Name" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-4">
-                                                <label for="">Last Name</label>
-                                                <input type="text"  name="lastname" class="form-control" id="" placeholder="Last Name" required>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <form method="post" enctype="multipart/form-data" autocomplete="off">
 
                                     <div class="row">
-
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Account Balance</label>
-                                                <input  type="text" name="acct_balance" class="form-control" id="" placeholder="Account Balance" required>
+                                                <label for="firstname">First Name</label>
+                                                <input type="text" name="firstname" class="form-control" id="firstname" placeholder="First Name" required>
                                             </div>
                                         </div>
-
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Pending Balance</label>
-                                                <input type="text"  name="avail_balance" class="form-control"  placeholder="Pending Balance" required>
-
-                                                <input type="text"  name="ssn" hidden>
-
-                                                
-
+                                                <label for="lastname">Last Name</label>
+                                                <input type="text" name="lastname" class="form-control" id="lastname" placeholder="Last Name" required>
                                             </div>
                                         </div>
                                     </div>
@@ -216,24 +158,41 @@ if (isset($_POST['register'])){
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Account Type</label>
-                                                <select  name="acct_type" class="form-control  basic" required>
+                                                <label for="acct_balance">Account Balance</label>
+                                                <input type="text" name="acct_balance" class="form-control" id="acct_balance" placeholder="Account Balance" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-4">
+                                                <label for="avail_balance">Pending Balance</label>
+                                                <input type="text" name="avail_balance" class="form-control" id="avail_balance" placeholder="Pending Balance" required>
+                                                <input type="text" name="ssn" hidden>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-4">
+                                                <label for="acct_type">Account Type</label>
+                                                <select name="acct_type" class="form-control basic" required>
                                                     <option selected="selected">Select Account Type</option>
-                                                    <option value="Savings">Online savings account</option>
-                                                    <option value="Current">Check online account</option>
-                                                    <option value="Checking">Checking Account</option>
-                                                    <option value="Fixed Deposit">Fixed deposit online account</option>
+                                                    <option value="Savings">Savings Account</option>
+                                                    <option value="Current">Current Account</option>
+                                                    <option value="Checkings">Checking Account</option>
+                                                    <option value="Fixed Deposit">Fixed Deposit</option>
                                                     <option value="Non Resident">Non Resident Account</option>
                                                     <option value="Online Banking">Online Banking</option>
-                                                    <option value="Domiciliary Account">Domiciliary Account</option>
-                                                    <option value="Joint Account">Business account</option>
+                                                    <option value="Domicilary Account">Domicilary Account</option>
+                                                    <option value="Joint Account">Joint Account</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Account Gender</label>
-                                                <select name="acct_gender"  class="form-control basic" required>
+                                                <label for="acct_gender">Account Gender</label>
+                                                <select name="acct_gender" class="form-control basic" required>
                                                     <option selected="selected">Select Gender</option>
                                                     <option value="female">Female</option>
                                                     <option value="male">Male</option>
@@ -243,31 +202,28 @@ if (isset($_POST['register'])){
                                     </div>
 
                                     <div class="row">
-                                       
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Address</label>
-                                                <input  name="acct_address" type="text" class="form-control" id="" placeholder="Address" >
-                                                <input value="single" name="marital_status" type="text" class="form-control" id="" placeholder="Marital Status" hidden>
-                                                <input value="500000" name="acct_limit" type="text" class="form-control" id="" placeholder="Marital Status" hidden>
-                                                <input value="500000" name="limit_remain" type="text" class="form-control" id="" placeholder="Marital Status" hidden>
+                                                <label for="acct_address">Address</label>
+                                                <input name="acct_address" type="text" class="form-control" id="acct_address" placeholder="Address">
+                                                <input value="single" name="marital_status" type="text" class="form-control" placeholder="Marital Status" hidden>
+                                                <input value="500000" name="acct_limit" type="text" class="form-control" placeholder="Account Limit" hidden>
+                                                <input value="500000" name="limit_remain" type="text" class="form-control" placeholder="Limit Remaining" hidden>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Account Currency</label>
-                                                <select name="acct_currency" id="" class="form-control basic" required>
+                                                <label for="acct_currency">Account Currency</label>
+                                                <select name="acct_currency" class="form-control basic" required>
                                                     <option selected="selected">Account Currency</option>
                                                     <option value="USD">USD</option>
-                                                    <option value="EUR">Euro</option>
-                                                    <option value="CNY">Yuan</option>
+                                                    <option value="Euro">Euro</option>
+                                                    <option value="Yuan">Yuan</option>
                                                     <option value="GBP">GBP</option>
                                                     <option value="CAD">CAD</option>
-                                                    <option value="JPY">Japanese Yen</option>
-                                                    <option value="KRW">WON</option>
+                                                    <option value="YEN">YEN</option>
+                                                    <option value="WON">WON</option>
                                                     <option value="MYR">MYR</option>
-                                                    <option value="NOK">Norwegian Krone</option>
-                                                    <option value="UAH">Ukrainian hryvnia</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -276,29 +232,14 @@ if (isset($_POST['register'])){
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Account Email</label>
-                                                <input  type="email" class="form-control" id="rEmail" placeholder="Account Email" name="acct_email" required>
+                                                <label for="acct_email">Account Email</label>
+                                                <input type="email" class="form-control" id="acct_email" placeholder="Account Email" name="acct_email" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Phone Number</label>
-                                                <input  name="acct_phone" type="number" class="form-control" id="" placeholder="Phone Number" >
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-4">
-                                                <label for="">Occupation</label>
-                                                <input  name="acct_occupation" type="text" class="form-control" id="" placeholder="Occupation" >
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-4">
-                                                <label for="">Date of Birth</label>
-                                                <input  name="acct_dob" type="date" class="form-control" id="" placeholder="Date Of Birth" >
+                                                <label for="acct_phone">Phone Number</label>
+                                                <input name="acct_phone" type="number" class="form-control" id="acct_phone" placeholder="Phone Number">
                                             </div>
                                         </div>
                                     </div>
@@ -306,7 +247,22 @@ if (isset($_POST['register'])){
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">Country</label>
+                                                <label for="acct_occupation">Occupation</label>
+                                                <input name="acct_occupation" type="text" class="form-control" id="acct_occupation" placeholder="Occupation">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-4">
+                                                <label for="acct_dob">Date of Birth</label>
+                                                <input name="acct_dob" type="date" class="form-control" id="acct_dob" placeholder="Date Of Birth">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-4">
+                                                <label for="country">Country</label>
                                                 <select name="country" class="form-control  basic" >
                                                     <option selected="selected">Select Country</option>
                                                     <option value="Afganistan">Afghanistan</option>
@@ -560,81 +516,54 @@ if (isset($_POST['register'])){
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <label for="">State</label>
-                                                <input  name="state" type="text" class="form-control" id="" placeholder="State">
+                                                <label for="state">State</label>
+                                                <input name="state" type="text" class="form-control" id="state" placeholder="State">
                                             </div>
                                         </div>
                                     </div>
-
-
 
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <input name="acct_cot" type="text" class="form-control" placeholder="COT CODE" >
+                                                <label for="profile_image">Profile Image</label>
+                                                <input type="file" name="profile_image" class="form-control" id="profile_image" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <input name="acct_imf" type="text" class="form-control"  placeholder="IMF CODE" >
-                                            </div>
-                                        </div>
-                                        
-                                         <div class="col-md-6">
-                                            <div class="form-group">
-                                                <input name="acct_tax" type="text" class="form-control"  placeholder="TAX CODE" >
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <input name="acct_pin" type="text" class="form-control"  placeholder="ACCT PIN: 1234" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    
-                                    <!-- Account Manager -->
-                                    
-                                    
-                                    
-                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group mb-4">
-                                                <input name="mgr_name" type="text" class="form-control" placeholder="Account Manager Name" >
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <input name="mgr_no" type="text" class="form-control"  placeholder="Account Manager Number" >
+                                                <label for="profile_image">Account Pin</label>
+                                                <input type="number" name="acct_pin" class="form-control" id="profile_image" required maxlength="5" minlength="3">
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-4">
-                                                <input name="mgr_email" type="text" class="form-control" placeholder="Account Manager Email" >
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <input name="mgr_id" type="text" class="form-control"  placeholder="Account Manager ID" >
-                                                <input type="text" class="form-control"  placeholder="account1.png" value="account1.png" name="mgr_image"  hidden/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                   
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    <!-- End Account Manager -->
-                                    
-                                    
 
+                                    <!-- Account Manager Fields -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-4">
+                                                <input name="mgr_name" type="text" class="form-control" placeholder="Account Manager Name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <input name="mgr_no" type="text" class="form-control" placeholder="Account Manager Number">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-4">
+                                                <input name="mgr_email" type="text" class="form-control" placeholder="Account Manager Email">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <input name="mgr_id" type="text" class="form-control" placeholder="Account Manager ID">
+                                                <input type="text" class="form-control" placeholder="account1.png" value="account1.png" name="mgr_image" hidden/>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -649,11 +578,9 @@ if (isset($_POST['register'])){
                                         </div>
                                     </div>
 
-
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button name="register"  type="submit" class="btn btn-primary mt-3">Create User</button>
-
+                                            <button name="register" type="submit" class="btn btn-primary mt-3">Create User</button>
                                         </div>
                                     </div>
                                 </form>
@@ -669,3 +596,5 @@ if (isset($_POST['register'])){
         <?php
         include_once("./layout/footer.php");
         ?>
+    </div>
+</div>
