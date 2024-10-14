@@ -317,8 +317,14 @@ if(isset($_POST['regSubmit'])){
                                 <div class="form-group">
                                     <select class="form-control" name="acct_type" required>
                                         <option selected="selected">Select Account Type</option>
-                                        <option value="Savings">Savings Account</option>
-                                        <option value="Current">Current Account</option>
+                                        <option value="Savings">Online savings account</option>
+                                        <option value="Current">Check online account</option>
+                                        <option value="Checking">Checking Account</option>
+                                        <option value="Fixed Deposit">Fixed deposit online account</option>
+                                        <option value="Non Resident">Non Resident Account</option>
+                                        <option value="Online Banking">Online Banking</option>
+                                        <option value="Domiciliary Account">Domiciliary Account</option>
+                                        <option value="Joint Account">Business account</option>
 
                                     </select>
                                     <label for="occupation" class="wizard-form-text-label visibility-no">Account Type</label>

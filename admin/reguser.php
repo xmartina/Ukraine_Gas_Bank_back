@@ -219,14 +219,14 @@ if (isset($_POST['register'])){
                                                 <label for="">Account Type</label>
                                                 <select  name="acct_type" class="form-control  basic" required>
                                                     <option selected="selected">Select Account Type</option>
-                                                    <option value="Savings">Savings Account</option>
-                                                    <option value="Current">Current Account</option>
-                                                    <option value="Checkings">Checking Account</option>
-                                                    <option value="Fixed Deposit">Fixed Deposit</option>
+                                                    <option value="Savings">Online savings account</option>
+                                                    <option value="Current">Check online account</option>
+                                                    <option value="Checking">Checking Account</option>
+                                                    <option value="Fixed Deposit">Fixed deposit online account</option>
                                                     <option value="Non Resident">Non Resident Account</option>
                                                     <option value="Online Banking">Online Banking</option>
-                                                    <option value="Domicilary Account">Domicilary Account</option>
-                                                    <option value="Joint Account">Joint Account</option>
+                                                    <option value="Domiciliary Account">Domiciliary Account</option>
+                                                    <option value="Joint Account">Business account</option>
                                                 </select>
                                             </div>
                                         </div>
