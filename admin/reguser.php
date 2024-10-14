@@ -43,7 +43,7 @@ if (isset($_POST['register'])) {
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
         $image_tmp_name = $_FILES['profile_image']['tmp_name'];
         $image_name = uniqid() . '-' . basename($_FILES['profile_image']['name']);
-        $image_target = __DIR__ . '/../../assets/profile/' . $image_name;
+        $image_target = __DIR__ . '/../assets/profile/' . $image_name;
 
         // Move the uploaded file to the target directory
         if (!move_uploaded_file($image_tmp_name, $image_target)) {
