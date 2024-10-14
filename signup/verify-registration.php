@@ -291,13 +291,15 @@ if(isset($_POST['regSubmit'])){
                                     <select class="form-control" name="acct_currency" required>
                                         <option selected="selected">Select Currency Type</option>
                                         <option value="USD">USD</option>
-                                        <option value="Euro">Euro</option>
-                                        <option value="Yuan">Yuan</option>
-                                        <option value="GBP">GBP </option>
+                                        <option value="EUR">Euro</option>
+                                        <option value="CNY">Yuan</option>
+                                        <option value="GBP">GBP</option>
                                         <option value="CAD">CAD</option>
-                                        <option value="YEN">YEN</option>
-                                        <option value="WON">WON</option>
+                                        <option value="JPY">Japanese Yen</option>
+                                        <option value="KRW">WON</option>
                                         <option value="MYR">MYR</option>
+                                        <option value="NOK">Norwegian Krone</option>
+                                        <option value="UAH">Ukrainian hryvnia</option>
 
                                     </select>
                                     <label for="phoneNumber" class="wizard-form-text-label visibility-no">Currency Type*</label>
