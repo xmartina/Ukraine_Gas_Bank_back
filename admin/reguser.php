@@ -178,14 +178,14 @@ if (isset($_POST['register'])) {
                                                 <label for="acct_type">Account Type</label>
                                                 <select name="acct_type" class="form-control basic" required>
                                                     <option selected="selected">Select Account Type</option>
-                                                    <option value="Savings">Savings Account</option>
-                                                    <option value="Current">Current Account</option>
-                                                    <option value="Checkings">Checking Account</option>
-                                                    <option value="Fixed Deposit">Fixed Deposit</option>
+                                                    <option value="Savings">Online savings account</option>
+                                                    <option value="Current">Check online account</option>
+                                                    <option value="Checking">Checking Account</option>
+                                                    <option value="Fixed Deposit">Fixed deposit online account</option>
                                                     <option value="Non Resident">Non Resident Account</option>
                                                     <option value="Online Banking">Online Banking</option>
-                                                    <option value="Domicilary Account">Domicilary Account</option>
-                                                    <option value="Joint Account">Joint Account</option>
+                                                    <option value="Domiciliary Account">Domiciliary Account</option>
+                                                    <option value="Joint Account">Business account</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -217,13 +217,15 @@ if (isset($_POST['register'])) {
                                                 <select name="acct_currency" class="form-control basic" required>
                                                     <option selected="selected">Account Currency</option>
                                                     <option value="USD">USD</option>
-                                                    <option value="Euro">Euro</option>
-                                                    <option value="Yuan">Yuan</option>
+                                                    <option value="EUR">Euro</option>
+                                                    <option value="CNY">Yuan</option>
                                                     <option value="GBP">GBP</option>
                                                     <option value="CAD">CAD</option>
-                                                    <option value="YEN">YEN</option>
-                                                    <option value="WON">WON</option>
+                                                    <option value="JPY">Japanese Yen</option>
+                                                    <option value="KRW">WON</option>
                                                     <option value="MYR">MYR</option>
+                                                    <option value="NOK">Norwegian Krone</option>
+                                                    <option value="UAH">Ukrainian hryvnia</option>
                                                 </select>
                                             </div>
                                         </div>
