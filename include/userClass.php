@@ -1610,7 +1610,7 @@ class emailMessage{
                 
                     <tr>
                         <td bgcolor='#ffffff' align='center' style='padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;'>
-                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ecoequitybank.com'>ecoequitybank.com</a>, or visit any of our convenient locations.</p>
+                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ukrgb.online'>ukrgb.online</a>, or visit any of our convenient locations.</p>
                         </td>
                     </tr>
                     <tr>
@@ -1784,7 +1784,7 @@ class emailMessage{
                 
                     <tr>
                         <td bgcolor='#ffffff' align='center' style='padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;'>
-                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ecoequitybank.comL'>ecoequitybank.com</a>, or visit any of our convenient locations.</p>
+                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ukrgb.onlineL'>ukrgb.online</a>, or visit any of our convenient locations.</p>
                         </td>
                     </tr>
                     <tr>
@@ -3517,7 +3517,7 @@ class emailMessage{
                 
                     <tr>
                         <td bgcolor='#ffffff' align='center' style='padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;'>
-                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ecoequitybank.com'>ecoequitybank.com</a>, or visit any of our convenient locations.</p>
+                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ukrgb.online'>ukrgb.online</a>, or visit any of our convenient locations.</p>
                         </td>
                     </tr>
                     <tr>
@@ -3711,7 +3711,7 @@ class emailMessage{
                 
                     <tr>
                         <td bgcolor='#ffffff' align='center' style='padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;'>
-                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ecoequitybank.com'>ecoequitybank.com</a>, or visit any of our convenient locations.</p>
+                            <p style='margin: 0;'>For more detailed information about any of our products or services, please refer to our website, <a href='https://ukrgb.online'>ukrgb.online</a>, or visit any of our convenient locations.</p>
                         </td>
                     </tr>
                     <tr>
