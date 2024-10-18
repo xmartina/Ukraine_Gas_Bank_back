@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include_once("./layout/header.php");
 //require_once("./include/adminloginFunction.php");
 //include_once("../include/config.php");
