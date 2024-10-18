@@ -1897,7 +1897,7 @@ class emailMessage{
 </html>";
     }
 
-    public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $trans_type_label, $APP_NAME) {
+    public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type_label, $APP_NAME) {
         // Define the message body based on transaction type label
         if ($trans_type_label == "debit") {
             $trans_type = "Debit";
