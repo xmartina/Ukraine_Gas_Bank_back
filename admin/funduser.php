@@ -139,7 +139,6 @@ if (isset($_POST['credit'])) {
             ]);
 
             // Prepare email content
-            $subject = "[DEBIT NOTIFICATION] - $APP_NAME";
             $APP_NAME = $pageTitle;
             $email = $result['acct_email'];
             $fullName = $result['firstname'] . " " . $result['lastname'];
