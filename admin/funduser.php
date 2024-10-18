@@ -21,7 +21,32 @@ if(isset($_POST['credit'])){
     ]);
     $result = $checkUser->fetch(PDO::FETCH_ASSOC);
     $user_balance = $result['acct_balance'];
+    $currency = $result['currency'];
     $available_balance = $amount + $result['acct_balance'];
+
+    if($result['acct_currency'] === 'USD'){
+        $currency = "$";
+    }elseif($result['acct_currency'] === 'EUR'){
+        $currency = "€";
+    }elseif($result['acct_currency'] === 'WON'){
+        $currency = "₩";
+    }elseif($result['acct_currency'] === 'CNY' || $result['acct_currency'] === 'JPY'){
+        $currency = "¥";
+    }elseif($result['acct_currency'] === 'MYR'){
+        $currency = "RM";
+    }elseif($result['acct_currency'] === 'GBP'){
+        $currency = "£";
+    }elseif($result['acct_currency'] === 'CAD'){
+        $currency = "$";
+    }elseif($result['acct_currency'] === 'NOK'){
+        $currency = "kr";
+    }elseif($result['acct_currency'] === 'UAH'){
+        $currency = "₴";
+    } else {
+        $currency = ""; // Default or unknown currency symbol
+    }
+
+
 
     $sql = "UPDATE users SET acct_balance=:available_balance WHERE id=:user_id";
     $addUp = $conn->prepare($sql);
@@ -83,6 +108,28 @@ else if(isset($_POST['debit'])){
         'user_id'=>$user_id
     ]);
     $result = $checkUser->fetch(PDO::FETCH_ASSOC);
+
+    if($result['acct_currency'] === 'USD'){
+        $currency = "$";
+    }elseif($result['acct_currency'] === 'EUR'){
+        $currency = "€";
+    }elseif($result['acct_currency'] === 'WON'){
+        $currency = "₩";
+    }elseif($result['acct_currency'] === 'CNY' || $result['acct_currency'] === 'JPY'){
+        $currency = "¥";
+    }elseif($result['acct_currency'] === 'MYR'){
+        $currency = "RM";
+    }elseif($result['acct_currency'] === 'GBP'){
+        $currency = "£";
+    }elseif($result['acct_currency'] === 'CAD'){
+        $currency = "$";
+    }elseif($result['acct_currency'] === 'NOK'){
+        $currency = "kr";
+    }elseif($result['acct_currency'] === 'UAH'){
+        $currency = "₴";
+    } else {
+        $currency = ""; // Default or unknown currency symbol
+    }
 
     if($amount > $result['acct_balance']){
         toast_alert('error','Insufficient Balance');
