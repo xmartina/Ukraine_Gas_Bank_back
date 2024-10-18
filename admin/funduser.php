@@ -3,187 +3,82 @@ include_once("./layout/header.php");
 //require_once("./include/adminloginFunction.php");
 //include_once("../include/config.php");
 
-if(isset($_POST['credit'])){
-    $user_id = $_POST['user_id'];
-    $sender_name = $_POST['sender_name'];
-    $amount = $_POST['amount'];
-    $description = $_POST['description'];
-    $created_at = $_POST['created_at'];
-    $time_created = $_POST['time_created'];
-
-    $trans_type = 1;
-    $trans_status = 1;
- 
-    $sql = "SELECT * FROM users WHERE id =:user_id";
-    $checkUser = $conn->prepare($sql);
-    $checkUser->execute([
-       'user_id'=>$user_id
-    ]);
-    $result = $checkUser->fetch(PDO::FETCH_ASSOC);
-    $user_balance = $result['acct_balance'];
-    $currency = $result['currency'];
-    $available_balance = $amount + $result['acct_balance'];
-
-    if($result['acct_currency'] === 'USD'){
-        $currency = "$";
-    }elseif($result['acct_currency'] === 'EUR'){
-        $currency = "€";
-    }elseif($result['acct_currency'] === 'WON'){
-        $currency = "₩";
-    }elseif($result['acct_currency'] === 'CNY' || $result['acct_currency'] === 'JPY'){
-        $currency = "¥";
-    }elseif($result['acct_currency'] === 'MYR'){
-        $currency = "RM";
-    }elseif($result['acct_currency'] === 'GBP'){
-        $currency = "£";
-    }elseif($result['acct_currency'] === 'CAD'){
-        $currency = "$";
-    }elseif($result['acct_currency'] === 'NOK'){
-        $currency = "kr";
-    }elseif($result['acct_currency'] === 'UAH'){
-        $currency = "₴";
-    } else {
-        $currency = ""; // Default or unknown currency symbol
-    }
-
-
-
-    $sql = "UPDATE users SET acct_balance=:available_balance WHERE id=:user_id";
-    $addUp = $conn->prepare($sql);
-    $addUp->execute([
-       'available_balance'=>$available_balance,
-        'user_id'=>$user_id
-    ]);
-
-
-    if(true) {
-        $trans_id = uniqid();
-        $sql = "INSERT INTO transactions (user_id,sender_name,amount,description,created_at,time_created,trans_type,refrence_id,trans_status) VALUES(:user_id,:sender_name,:amount,:description,:created_at,:time_created,:trans_type,:refrence_id,:trans_status)";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([
-            'user_id' => $user_id,
-            'sender_name' => $sender_name,
-            'amount' => $amount,
-            'description' => $description,
-            'created_at' => $created_at,
-            'time_created' => $time_created,
-            'trans_type' => $trans_type,
-            'refrence_id'=>$trans_id,
-            'trans_status' => $trans_status
-        ]);
-
-        $APP_NAME = $pageTitle;
-        $currency = currency($result);
-        $email = $result['acct_email'];
-        $transfer_type = "Credit";
-        
-        $fullName = $result['firstname']." ".$result['lastname'];
-
-        $trans_type = "credit"; // set transaction type
-        $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME);
-        $subject = "[CREDIT NOTIFICATION] - $APP_NAME";
-        $email_message->send_mail($email, $message, $subject);
-        $email_message->send_mail(WEB_EMAIL, $message, $subject);
-
-        if (true) {
-            toast_alert('success', 'Account Fund Successfully', 'Approved');
-        } else {
-            toast_alert('error', 'Sorry Something Went Wrong');
-        }
-    }
+if (isset($_POST['credit'])) {
+    // Credit transaction
+    $trans_type = "credit";
+    $subject_prefix = "CREDIT";
+} elseif (isset($_POST['debit'])) {
+    // Debit transaction
+    $trans_type = "debit";
+    $subject_prefix = "DEBIT";
 }
-else if(isset($_POST['debit'])){
-    $user_id = $_POST['user_id'];
-    $sender_name = $_POST['sender_name'];
-    $amount = $_POST['amount'];
-    $description = $_POST['description'];
-    $created_at = $_POST['created_at'];
-    $time_created = $_POST['time_created'];
 
-    $trans_type = 2;
-    $trans_status = 1;
-    $sql = "SELECT * FROM users WHERE id =:user_id";
-    $checkUser = $conn->prepare($sql);
-    $checkUser->execute([
-        'user_id'=>$user_id
-    ]);
-    $result = $checkUser->fetch(PDO::FETCH_ASSOC);
+$user_id = $_POST['user_id'];
+$sender_name = $_POST['sender_name'];
+$amount = $_POST['amount'];
+$description = $_POST['description'];
+$created_at = $_POST['created_at'];
+$time_created = $_POST['time_created'];
 
-    if($result['acct_currency'] === 'USD'){
-        $currency = "$";
-    }elseif($result['acct_currency'] === 'EUR'){
-        $currency = "€";
-    }elseif($result['acct_currency'] === 'WON'){
-        $currency = "₩";
-    }elseif($result['acct_currency'] === 'CNY' || $result['acct_currency'] === 'JPY'){
-        $currency = "¥";
-    }elseif($result['acct_currency'] === 'MYR'){
-        $currency = "RM";
-    }elseif($result['acct_currency'] === 'GBP'){
-        $currency = "£";
-    }elseif($result['acct_currency'] === 'CAD'){
-        $currency = "$";
-    }elseif($result['acct_currency'] === 'NOK'){
-        $currency = "kr";
-    }elseif($result['acct_currency'] === 'UAH'){
-        $currency = "₴";
-    } else {
-        $currency = ""; // Default or unknown currency symbol
-    }
+// Fetch user info
+$sql = "SELECT * FROM users WHERE id = :user_id";
+$checkUser = $conn->prepare($sql);
+$checkUser->execute(['user_id' => $user_id]);
+$result = $checkUser->fetch(PDO::FETCH_ASSOC);
 
-    if($amount > $result['acct_balance']){
-        toast_alert('error','Insufficient Balance');
-    }else {
+$user_balance = $result['acct_balance'];
+$available_balance = ($trans_type == "credit") ? $user_balance + $amount : $user_balance - $amount;
 
+// Set currency symbol
+$currency_symbols = [
+    'USD' => '$', 'EUR' => '€', 'WON' => '₩', 'CNY' => '¥', 'JPY' => '¥',
+    'MYR' => 'RM', 'GBP' => '£', 'CAD' => '$', 'NOK' => 'kr', 'UAH' => '₴'
+];
+$currency = isset($currency_symbols[$result['acct_currency']]) ? $currency_symbols[$result['acct_currency']] : '';
 
+// Update user balance
+$sql = "UPDATE users SET acct_balance = :available_balance WHERE id = :user_id";
+$addUp = $conn->prepare($sql);
+$addUp->execute([
+    'available_balance' => $available_balance,
+    'user_id' => $user_id
+]);
 
+// Insert into transactions
+$trans_id = uniqid();
+$sql = "INSERT INTO transactions (user_id, sender_name, amount, description, created_at, time_created, trans_type, refrence_id, trans_status) 
+        VALUES (:user_id, :sender_name, :amount, :description, :created_at, :time_created, :trans_type, :refrence_id, :trans_status)";
+$stmt = $conn->prepare($sql);
+$stmt->execute([
+    'user_id' => $user_id,
+    'sender_name' => $sender_name,
+    'amount' => $amount,
+    'description' => $description,
+    'created_at' => $created_at,
+    'time_created' => $time_created,
+    'trans_type' => $trans_type == 'credit' ? 1 : 2,
+    'refrence_id' => $trans_id,
+    'trans_status' => 1
+]);
 
-        $available_balance = ($result['acct_balance'] - $amount);
-//        $amount-=$result['acct_balance'];
+// Prepare email
+$APP_NAME = $pageTitle;
+$email = $result['acct_email'];
+$fullName = $result['firstname'] . " " . $result['lastname'];
 
-        $sql = "UPDATE users SET acct_balance=:available_balance WHERE id=:user_id";
-        $addUp = $conn->prepare($sql);
-        $addUp->execute([
-            'available_balance' => $available_balance,
-            'user_id' => $user_id
-        ]);
+// Call email message method
+$message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME);
 
-        if (true) {
-            $trans_id = uniqid();
-            $sql = "INSERT INTO transactions (user_id,sender_name,amount,description,created_at,time_created,trans_type,refrence_id,trans_status) VALUES(:user_id,:sender_name,:amount,:description,:created_at,:time_created,:trans_type,:refrence_id,:trans_status)";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([
-                'user_id' => $user_id,
-                'sender_name' => $sender_name,
-                'amount' => $amount,
-                'description' => $description,
-                'created_at' => $created_at,
-                'time_created' => $time_created,
-                'trans_type' => $trans_type,
-                'refrence_id'=>$trans_id,
-                'trans_status' => $trans_status
-            ]);
+// Set the subject dynamically for both credit and debit
+$subject = "[$subject_prefix NOTIFICATION] - $APP_NAME";
 
-            $APP_NAME = $pageTitle;
-            $currency = currency($result);
-            $email = $result['acct_email'];
-            $transfer_type = "Debit";
+// Send email
+$email_message->send_mail($email, $message, $subject);
+$email_message->send_mail(WEB_EMAIL, $message, $subject);
 
-            $trans_type = "debit"; // set transaction type
-            $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME);
-            $subject = "[DEBIT NOTIFICATION] - $APP_NAME";
-            $email_message->send_mail($email, $message, $subject);
-            $email_message->send_mail(WEB_EMAIL, $message, $subject);
+// Send success/failure alerts
+toast_alert('success', ucfirst($trans_type) . ' transaction successful.', 'Approved');
 
-            if (true) {
-                toast_alert('success', 'Account Debit Successfully', 'Approved');
-            } else {
-                toast_alert('error', 'Sorry Something Went Wrong');
-            }
-        }
-    }
-}
- 
 ?>
 <!--  BEGIN CONTENT AREA  -->
 <div id="content" class="main-content">

@@ -1898,12 +1898,12 @@ class emailMessage{
     }
 
     public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME) {
-
         if ($trans_type == "debit") {
             $message_body = "Dear $fullName, your account was debited by $currency$amount.";
         } else if ($trans_type == "credit") {
             $message_body = "Dear $fullName, your account was credited with $currency$amount.";
         }
+
         return "<!DOCTYPE html>
 <html>
 
