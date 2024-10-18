@@ -1897,7 +1897,13 @@ class emailMessage{
 </html>";
     }
 
-    public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance,$description, $created_at , $trans_type, $APP_NAME){
+    public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME) {
+
+        if ($trans_type == "debit") {
+            $message_body = "Dear $fullName, your account was debited by $currency$amount.";
+        } else if ($trans_type == "credit") {
+            $message_body = "Dear $fullName, your account was credited with $currency$amount.";
+        }
         return "<!DOCTYPE html>
 <html>
 
@@ -2029,7 +2035,7 @@ class emailMessage{
                 <table border='0' cellpadding='0' cellspacing='0' width='100%' style='max-width: 600px;'>
                     <tr>
                         <td bgcolor='#ffffff' align='center' style='padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;'>
-                            <p style='margin: 0;'>Dear $fullName, You just recieved a Transaction of $currency$amount on your Account. </p>
+                            <p style='margin: 0;'>$message_body</p>
                         </td>
                     </tr>
                     <tr>

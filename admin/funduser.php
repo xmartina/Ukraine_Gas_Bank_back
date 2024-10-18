@@ -54,10 +54,10 @@ if(isset($_POST['credit'])){
         
         $fullName = $result['firstname']." ".$result['lastname'];
 
-        $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance,$description, $created_at , $trans_type, $APP_NAME);
+        $trans_type = "credit"; // set transaction type
+        $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME);
         $subject = "[CREDIT NOTIFICATION] - $APP_NAME";
         $email_message->send_mail($email, $message, $subject);
-        $subject = "[CREDIT NOTIFICATION] - $APP_NAME";
         $email_message->send_mail(WEB_EMAIL, $message, $subject);
 
         if (true) {
@@ -122,10 +122,10 @@ else if(isset($_POST['debit'])){
             $email = $result['acct_email'];
             $transfer_type = "Debit";
 
-            $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance,$description, $created_at , $trans_type, $APP_NAME);
+            $trans_type = "debit"; // set transaction type
+            $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME);
             $subject = "[DEBIT NOTIFICATION] - $APP_NAME";
             $email_message->send_mail($email, $message, $subject);
-            $subject = "[DEBIT NOTIFICATION] - $APP_NAME";
             $email_message->send_mail(WEB_EMAIL, $message, $subject);
 
             if (true) {
