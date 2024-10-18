@@ -74,7 +74,7 @@ if (isset($_POST['credit'])) {
         $fullName = $result['firstname'] . " " . $result['lastname'];
         $trans_type_label = "credit"; // Correctly set transaction type label for email body
         $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type_label, $APP_NAME);
-        $subject = "[CREDIT NOTIFICATION] - $APP_NAME";
+        $subject = "[BALANCE NOTIFICATION] - $APP_NAME";
 
         // Send email
         $email_message->send_mail($email, $message, $subject);
@@ -144,7 +144,7 @@ if (isset($_POST['credit'])) {
             $fullName = $result['firstname'] . " " . $result['lastname'];
             $trans_type_label = "debit"; // Correctly set transaction type label for email body
             $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type_label, $APP_NAME);
-            $subject = "[DEBIT NOTIFICATION] - $APP_NAME";
+            $subject = "[BALANCE NOTIFICATION] - $APP_NAME";
 
             // Send email
             $email_message->send_mail($email, $message, $subject);
