@@ -2,6 +2,21 @@
 include_once("./layout/header.php");
 //require_once("./include/adminloginFunction.php");
 //include_once("../include/config.php");
+function getCurrencySymbol($currency_code) {
+    switch ($currency_code) {
+        case 'USD': return "$";
+        case 'EUR': return "€";
+        case 'WON': return "₩";
+        case 'CNY': return "¥";
+        case 'JPY': return "¥";
+        case 'MYR': return "RM";
+        case 'GBP': return "£";
+        case 'CAD': return "$";
+        case 'NOK': return "kr";
+        case 'UAH': return "₴";
+        default: return ""; // Default or unknown currency symbol
+    }
+}
 
 if (isset($_POST['credit'])) {
     // Credit transaction
