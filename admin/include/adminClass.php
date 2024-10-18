@@ -1897,10 +1897,10 @@ class emailMessage{
 </html>";
     }
 
-    public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type, $APP_NAME) {
-        if ($trans_type == "debit") {
+    public function FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type_label, $APP_NAME) {
+        if ($trans_type_label == "debit") {
             $message_body = "Dear $fullName, your account was debited by $currency$amount.";
-        } else if ($trans_type == "credit") {
+        } else if ($trans_type_label == "credit") {
             $message_body = "Dear $fullName, your account was credited with $currency$amount.";
         }
 
