@@ -25,27 +25,7 @@ if (isset($_POST['credit'])) {
     $available_balance = $amount + $user_balance;
 
     // Set currency symbol
-    if ($result['acct_currency'] === 'USD') {
-        $currency = "$";
-    } elseif ($result['acct_currency'] === 'EUR') {
-        $currency = "€";
-    } elseif ($result['acct_currency'] === 'WON') {
-        $currency = "₩";
-    } elseif ($result['acct_currency'] === 'CNY' || $result['acct_currency'] === 'JPY') {
-        $currency = "¥";
-    } elseif ($result['acct_currency'] === 'MYR') {
-        $currency = "RM";
-    } elseif ($result['acct_currency'] === 'GBP') {
-        $currency = "£";
-    } elseif ($result['acct_currency'] === 'CAD') {
-        $currency = "$";
-    } elseif ($result['acct_currency'] === 'NOK') {
-        $currency = "kr";
-    } elseif ($result['acct_currency'] === 'UAH') {
-        $currency = "₴";
-    } else {
-        $currency = ""; // Default or unknown currency symbol
-    }
+    $currency = getCurrencySymbol($result['acct_currency']); // Using helper function to get the currency symbol
 
     // Update user balance
     $sql = "UPDATE users SET acct_balance = :available_balance WHERE id = :user_id";
@@ -77,7 +57,7 @@ if (isset($_POST['credit'])) {
         $APP_NAME = $pageTitle;
         $email = $result['acct_email'];
         $fullName = $result['firstname'] . " " . $result['lastname'];
-        $trans_type_label = "credit"; // set transaction type label for email body
+        $trans_type_label = "credit"; // Correctly set transaction type label for email body
         $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type_label, $APP_NAME);
         $subject = "[CREDIT NOTIFICATION] - $APP_NAME";
 
@@ -86,7 +66,7 @@ if (isset($_POST['credit'])) {
         $email_message->send_mail(WEB_EMAIL, $message, $subject);
 
         // Display success message
-        toast_alert('success', 'Account Fund Successfully', 'Approved');
+        toast_alert('success', 'Account Funded Successfully', 'Approved');
     } else {
         toast_alert('error', 'Sorry Something Went Wrong');
     }
@@ -109,27 +89,7 @@ if (isset($_POST['credit'])) {
     $result = $checkUser->fetch(PDO::FETCH_ASSOC);
 
     // Set currency symbol
-    if ($result['acct_currency'] === 'USD') {
-        $currency = "$";
-    } elseif ($result['acct_currency'] === 'EUR') {
-        $currency = "€";
-    } elseif ($result['acct_currency'] === 'WON') {
-        $currency = "₩";
-    } elseif ($result['acct_currency'] === 'CNY' || $result['acct_currency'] === 'JPY') {
-        $currency = "¥";
-    } elseif ($result['acct_currency'] === 'MYR') {
-        $currency = "RM";
-    } elseif ($result['acct_currency'] === 'GBP') {
-        $currency = "£";
-    } elseif ($result['acct_currency'] === 'CAD') {
-        $currency = "$";
-    } elseif ($result['acct_currency'] === 'NOK') {
-        $currency = "kr";
-    } elseif ($result['acct_currency'] === 'UAH') {
-        $currency = "₴";
-    } else {
-        $currency = ""; // Default or unknown currency symbol
-    }
+    $currency = getCurrencySymbol($result['acct_currency']); // Using helper function to get the currency symbol
 
     // Check if balance is sufficient
     if ($amount > $result['acct_balance']) {
@@ -167,7 +127,7 @@ if (isset($_POST['credit'])) {
             $APP_NAME = $pageTitle;
             $email = $result['acct_email'];
             $fullName = $result['firstname'] . " " . $result['lastname'];
-            $trans_type_label = "debit"; // set transaction type label for email body
+            $trans_type_label = "debit"; // Correctly set transaction type label for email body
             $message = $sendMail->FundUsers($fullName, $currency, $sender_name, $amount, $available_balance, $description, $created_at, $trans_type_label, $APP_NAME);
             $subject = "[DEBIT NOTIFICATION] - $APP_NAME";
 
@@ -176,12 +136,13 @@ if (isset($_POST['credit'])) {
             $email_message->send_mail(WEB_EMAIL, $message, $subject);
 
             // Display success message
-            toast_alert('success', 'Account Debit Successfully', 'Approved');
+            toast_alert('success', 'Account Debited Successfully', 'Approved');
         } else {
             toast_alert('error', 'Sorry Something Went Wrong');
         }
     }
 }
+
 
 ?>
 <!--  BEGIN CONTENT AREA  -->
