@@ -113,7 +113,7 @@ include("./userPinfunction.php");
                                     </div>
                                     <div class="col-md-6 ">
                                         <div class="form-group ">
-                                            <button class="btn btn-primary col-12" name="submit-pin">Submit</button>
+                                            <button class="btn btn-primary col-12" name="dom_submit_pin">Submit</button>
 
                                         </div>
                                     </div>
