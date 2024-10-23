@@ -1,204 +1,130 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-const rootDir = '/home/multistream6/domains/dashboard.azurecreditunion.online/public_html/';
-require '../include/vendor/autoload.php';
-require rootDir . 'include/vendor/autoload.php';
+    //error_reporting(E_ALL);
+    //ini_set('display_errors', 1);
+    const rootDir = '/home/multistream6/domains/dashboard.excelroyaltrustb.com/public_html/';
+    require '../include/vendor/autoload.php';
+    require __DIR__ . '/../include/vendor/autoload.php';
 
-$pageName  = "Registration";
-require_once './layout/header.php';
+    $pageName  = "Registration";
+    require_once './layout/header.php';
 
-if(isset($_POST['regSubmit'])){
-    // Initialize variables
-    $acct_no = "9909" . substr(number_format(time() * rand(), 0, '', ''), 0, 6);
-    $acct_type = isset($_POST['acct_type']) ? $_POST['acct_type'] : null;
-    $acct_currency = isset($_POST['acct_currency']) ? $_POST['acct_currency'] : null;
-    $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : null;
-    $lastname = isset($_POST['lastname']) ? $_POST['lastname'] : null;
-    $acct_occupation = isset($_POST['occupation']) ? $_POST['occupation'] : null;
-    $acct_status = "hold"; // Default value
-    $country = isset($_POST['country']) ? $_POST['country'] : null;
-    $acct_gender = isset($_POST['radio-name']) ? $_POST['radio-name'] : null;
-    $address = isset($_POST['address']) ? $_POST['address'] : null;
-    $suite = isset($_POST['suite']) ? $_POST['suite'] : null;
-    $city = isset($_POST['city']) ? $_POST['city'] : null;
-    $state = isset($_POST['state']) ? $_POST['state'] : null;
-    $zipcode = isset($_POST['zipcode']) ? $_POST['zipcode'] : null;
-    $acct_address = "$address $suite $city $state $zipcode";
-    $acct_email = isset($_POST['acct_email']) ? $_POST['acct_email'] : null;
-    $acct_phone = isset($_POST['phoneNumber']) ? $_POST['phoneNumber'] : null;
-    $acct_username = isset($_POST['username']) ? $_POST['username'] : null;
-    $acct_password = isset($_POST['acct_password']) ? $_POST['acct_password'] : null;
-    $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : null;
-    $acct_pin = isset($_POST['acct_pin']) ? $_POST['acct_pin'] : null;
-    // Set default values for SSN
-    $ssn = 0;
-    $confirm_ssn = 0;
+    if(isset($_POST['regSubmit'])){
+        // Initialize variables
+        $acct_no = "9909" . substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+        $acct_type = isset($_POST['acct_type']) ? $_POST['acct_type'] : null;
+        $acct_currency = isset($_POST['acct_currency']) ? $_POST['acct_currency'] : null;
+        $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : null;
+        $lastname = isset($_POST['lastname']) ? $_POST['lastname'] : null;
+        $acct_occupation = isset($_POST['occupation']) ? $_POST['occupation'] : null;
+        $acct_status = "hold"; // Default value
+        $country = isset($_POST['country']) ? $_POST['country'] : null;
+        $acct_gender = isset($_POST['radio-name']) ? $_POST['radio-name'] : null;
+        $address = isset($_POST['address']) ? $_POST['address'] : null;
+        $suite = isset($_POST['suite']) ? $_POST['suite'] : null;
+        $city = isset($_POST['city']) ? $_POST['city'] : null;
+        $state = isset($_POST['state']) ? $_POST['state'] : null;
+        $zipcode = isset($_POST['zipcode']) ? $_POST['zipcode'] : null;
+        $acct_address = "$address $suite $city $state $zipcode";
+        $acct_email = isset($_POST['acct_email']) ? $_POST['acct_email'] : null;
+        $acct_phone = isset($_POST['phoneNumber']) ? $_POST['phoneNumber'] : null;
+        $acct_username = isset($_POST['username']) ? $_POST['username'] : null;
+        $acct_password = isset($_POST['acct_password']) ? $_POST['acct_password'] : null;
+        $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : null;
+        $acct_pin = isset($_POST['acct_pin']) ? $_POST['acct_pin'] : null;
+        // Set default values for SSN
+        $ssn = 0;
+        $confirm_ssn = 0;
 
-    if($acct_password !== $confirmPassword){
-        notify_alert('Password not matched','danger','3000','close');
-    } elseif ($ssn !== $confirm_ssn){
-        notify_alert('SSN / TIN not matched','danger','3000','close');
-    } else {
-        // Prepare and execute SQL query (use prepared statements to prevent SQL injection)
-        $usersVerified = "SELECT * FROM users WHERE acct_email=:acct_email or acct_username=:acct_username";
-        $stmt = $conn->prepare($usersVerified);
-        $stmt->execute([
-            'acct_email' => $acct_email,
-            'acct_username' => $acct_username
-        ]);
+        // Profile image upload handling
+        $profile_image_name = null;
+        if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == UPLOAD_ERR_OK) {
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+            $file_type = mime_content_type($_FILES['profile_pic']['tmp_name']);
 
-        if ($stmt->rowCount() > 0) {
-            notify_alert('Email or Username Already Exist', 'danger', '3000', 'close');
+            if (in_array($file_type, $allowed_types)) {
+                $upload_dir = __DIR__ . "/../assets/profile/";
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+
+                $file_extension = pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION);
+                $profile_image_name = uniqid() . '.' . $file_extension;
+                $target_file = $upload_dir . $profile_image_name;
+
+                if (!move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target_file)) {
+                    $profile_image_name = null; // Reset if upload failed
+                }
+            }
+        }
+
+        if($acct_password !== $confirmPassword){
+            notify_alert('Password not matched','danger','3000','close');
+        } elseif ($ssn !== $confirm_ssn){
+            notify_alert('SSN / TIN not matched','danger','3000','close');
         } else {
-            // INSERT INTO DATABASE (use prepared statements to prevent SQL injection)
-            $registered = "INSERT INTO users (acct_username, firstname, lastname, acct_email, acct_password, acct_no, acct_type, acct_gender, acct_currency, acct_status, acct_phone, acct_occupation, country, state, acct_address, acct_dob, acct_pin, ssn, frontID, backID, image) VALUES(:acct_username, :firstname, :lastname, :acct_email, :acct_password, :acct_no, :acct_type, :acct_gender, :acct_currency, :acct_status, :acct_phone, :acct_occupation, :country, :state, :acct_address, :acct_dob, :acct_pin, :ssn, :frontID, :backID, :image)";
-            $reg = $conn->prepare($registered);
-            $reg->execute([
-                'acct_username' => $acct_username,
-                'firstname' => $firstname,
-                'lastname' => $lastname,
+            // Prepare and execute SQL query (use prepared statements to prevent SQL injection)
+            $usersVerified = "SELECT * FROM users WHERE acct_email=:acct_email or acct_username=:acct_username";
+            $stmt = $conn->prepare($usersVerified);
+            $stmt->execute([
                 'acct_email' => $acct_email,
-                'acct_password' => password_hash($acct_password, PASSWORD_BCRYPT),
-                'acct_no' => $acct_no,
-                'acct_type' => $acct_type,
-                'acct_gender' => $acct_gender,
-                'acct_currency' => $acct_currency,
-                'acct_status' => $acct_status,
-                'acct_phone' => $acct_phone,
-                'acct_occupation' => $acct_occupation,
-                'country' => $country,
-                'state' => $state,
-                'acct_address' => $acct_address,
-                'acct_dob' => 0, // You may change this to your requirement
-                'acct_pin' => $acct_pin,
-                'ssn' => 0, // You may change this to your requirement
-                'frontID' => 'null', // Default values
-                'backID' => 'null', // Default values
-                'image' => 'null' // Default values
+                'acct_username' => $acct_username
             ]);
 
-            if ($reg) {
-                // Email Sending logic
-                $fullName = "$firstname $lastname";
-                $APP_NAME = $pageTitle;
-                $APP_URL = WEB_URL;
-                $message = $sendMail->regMsgUser($fullName, $acct_no, $acct_status, $acct_email, $acct_phone, $acct_type, $acct_pin, $APP_NAME, $APP_URL);
-
-                // User Email
-                $subject = "Register - $APP_NAME";
-                $email_message->send_mail($acct_email, $message, $subject);
-
-                // Admin Email
-                $subject = "User Register - $APP_NAME";
-                $email_message->send_mail(WEB_EMAIL, $message, $subject);
-
-                toast_alert('success', 'Account Created Successfully, Kindly proceed to login', 'Approved');
+            if ($stmt->rowCount() > 0) {
+                notify_alert('Email or Username Already Exist', 'danger', '3000', 'close');
             } else {
-                toast_alert('error', 'Sorry something went wrong');
+                // INSERT INTO DATABASE (use prepared statements to prevent SQL injection)
+                $registered = "INSERT INTO users (acct_username, firstname, lastname, acct_email, acct_password, acct_no, acct_type, acct_gender, acct_currency, acct_status, acct_phone, acct_occupation, country, state, acct_address, acct_dob, acct_pin, ssn, frontID, backID, image) VALUES(:acct_username, :firstname, :lastname, :acct_email, :acct_password, :acct_no, :acct_type, :acct_gender, :acct_currency, :acct_status, :acct_phone, :acct_occupation, :country, :state, :acct_address, :acct_dob, :acct_pin, :ssn, :frontID, :backID, :image)";
+                $reg = $conn->prepare($registered);
+                $reg->execute([
+                    'acct_username' => $acct_username,
+                    'firstname' => $firstname,
+                    'lastname' => $lastname,
+                    'acct_email' => $acct_email,
+                    'acct_password' => password_hash($acct_password, PASSWORD_BCRYPT),
+                    'acct_no' => $acct_no,
+                    'acct_type' => $acct_type,
+                    'acct_gender' => $acct_gender,
+                    'acct_currency' => $acct_currency,
+                    'acct_status' => $acct_status,
+                    'acct_phone' => $acct_phone,
+                    'acct_occupation' => $acct_occupation,
+                    'country' => $country,
+                    'state' => $state,
+                    'acct_address' => $acct_address,
+                    'acct_dob' => 0, // You may change this to your requirement
+                    'acct_pin' => $acct_pin,
+                    'ssn' => 0, // You may change this to your requirement
+                    'frontID' => 'null', // Default values
+                    'backID' => 'null', // Default values
+                    'image' => $profile_image_name
+                ]);
+
+                if ($reg) {
+                    // Email Sending logic
+                    $fullName = "$firstname $lastname";
+                    $APP_NAME = $pageTitle;
+                    $APP_URL = WEB_URL;
+                    $message = $sendMail->regMsgUser($fullName, $acct_no, $acct_status, $acct_email, $acct_phone, $acct_type, $acct_pin, $APP_NAME, $APP_URL);
+
+                    // User Email
+                    $subject = "Register - $APP_NAME";
+                    $email_message->send_mail($acct_email, $message, $subject);
+//                    $email_message->send_mail($acct_email, $message, $subject);
+
+                    // Admin Email
+                    $subject = "User Register - $APP_NAME";
+                    $email_message->send_mail(WEB_EMAIL, $message, $subject);
+
+                    toast_alert('success', 'Account Created Successfully, Kindly proceed to login', 'Approved');
+                } else {
+                    toast_alert('error', 'Sorry something went wrong');
+                }
             }
         }
     }
-}
 
-/*
-if (isset($_FILES['profile_pic'])) {
-    $file = $_FILES['profile_pic'];
-    $name = $file['name'];
-
-    $path = pathinfo($name, PATHINFO_EXTENSION);
-
-    $allowed = array('jpg', 'png', 'jpeg');
-
-
-    $folder = "../assets/profile/";
-    $n = time() . $name;
-
-    $destination = $folder . $n;
-}
-if (move_uploaded_file($file['tmp_name'], $destination)) {
-
-    if (isset($_FILES['frontID'])) {
-        $file = $_FILES['frontID'];
-        $name = $file['name'];
-
-        $path = pathinfo($name, PATHINFO_EXTENSION);
-
-        $allowed = array('jpg', 'png', 'jpeg');
-
-
-        $folder = "../assets/idcard/";
-        $frontid = time() . $name;
-
-        $destination = $folder . $n;
-    }
-    if (isset($_FILES['profile_pic'])) {
-
-        //INSERT INTO DATABASE
-        $registered = "INSERT INTO users (acct_username,firstname,lastname,acct_email,acct_password,acct_no,acct_type,acct_gender,acct_currency,acct_status,acct_phone,acct_occupation,country,state,acct_address,acct_dob,acct_pin,ssn,frontID,backID,image) VALUES(:acct_username,:firstname,:lastname,:acct_email,:acct_password,:acct_no,:acct_type,:acct_gender,:acct_currency,:acct_status,:acct_phone,:acct_occupation,:country,:state,:acct_address,:acct_dob,:acct_pin,:ssn,:frontID,:backID,:image)";
-        $reg = $conn->prepare($registered);
-        $reg->execute([
-            'acct_username' => $acct_username,
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'acct_email' => $acct_email,
-            'acct_password' => password_hash((string)$acct_password, PASSWORD_BCRYPT),
-            'acct_no' => $acct_no,
-            'acct_type' => $acct_type,
-            'acct_gender' => $acct_gender,
-            'acct_currency' => $acct_currency,
-            'acct_status' => $acct_status,
-            'acct_phone' => $acct_phone,
-            'acct_occupation' => $acct_occupation,
-            'country' => $country,
-            'state' => $state,
-            'acct_address' => $acct_address,
-            'acct_dob' => $acct_dob,
-            'acct_pin' => $acct_pin,
-            'ssn' => $ssn,
-            'frontID' => $frontid,
-            'backID' => $backId,
-            'image'=>$n
-        ]);
-
-
-        if (true) {
-
-            // if ($acct_currency === 'USD') {
-            //     $currency = "$";
-            // } elseif ($acct_currency === 'EUR') {
-            //     $currency = "&euro;";
-            // }
-
-            $fullName = $firstname . " " . $lastname;
-            //EMAIL SENDING
-            $email = $acct_email;
-            $APP_NAME = $pageTitle;
-            $APP_URL = WEB_URL;
-            $message = $sendMail->regMsgUser($fullName,$acct_no,$acct_status,$acct_email,$acct_phone,$acct_type,$acct_pin,$APP_NAME,$APP_URL);
-            //User Email
-            $subject = "Register - $APP_NAME";
-            $email_message->send_mail($email, $message, $subject);
-            // Admin Email
-            $subject = "User Register - $APP_NAME";
-            $email_message->send_mail(WEB_EMAIL, $message, $subject);
-        }
-
-
-        if (true) {
-            toast_alert('success', 'Account Created Successfully, Kindly proceed to login', 'Approved');
-        } else {
-            toast_alert('error', 'Sorry something went wrong');
-        }
-
-    }
-}
-
-*/
-
-//require_once './layout/header.php';
-?>
-
+    ?>
 
     <!--New Reg Form-->
     <section class="wizard-section container mx-auto text-center">
@@ -246,10 +172,15 @@ if (move_uploaded_file($file['tmp_name'], $destination)) {
                                     <select class="form-control" name="acct_currency" required>
                                         <option selected="selected">Select Currency Type</option>
                                         <option value="USD">USD</option>
-                                        <option value="Euro">Euro</option>
-                                        <option value="Yuan">Yuan</option>
-                                        <option value="GBP">GBP </option>
+                                        <option value="EUR">Euro</option>
+                                        <option value="CNY">Yuan</option>
+                                        <option value="GBP">GBP</option>
                                         <option value="CAD">CAD</option>
+                                        <option value="JPY">Japanese Yen</option>
+                                        <option value="KRW">WON</option>
+                                        <option value="MYR">MYR</option>
+                                        <option value="NOK">Norwegian Krone</option>
+                                        <option value="UAH">Ukrainian hryvnia</option>
 
                                     </select>
                                     <label for="phoneNumber" class="wizard-form-text-label visibility-no">Currency Type*</label>
@@ -267,8 +198,16 @@ if (move_uploaded_file($file['tmp_name'], $destination)) {
                                 <div class="form-group">
                                     <select class="form-control" name="acct_type" required>
                                         <option selected="selected">Select Account Type</option>
-                                        <option value="Savings">Savings Account</option>
-                                        <option value="Current">Current Account</option>
+                                        <option selected="selected">Select Account Type</option>
+                                        <option value="Savings">Online savings account</option>
+                                        <option value="Current">Check online account</option>
+                                        <option value="Checking">Checking Account</option>
+                                        <option value="Fixed Deposit">Fixed deposit online account</option>
+                                        <option value="Non Resident">Non Resident Account</option>
+                                        <option value="Online Banking">Online Banking</option>
+                                        <option value="Domiciliary Account">Domiciliary Account</option>
+                                        <option value="Joint Account">Business Account</option>
+
 
                                     </select>
                                     <label for="occupation" class="wizard-form-text-label visibility-no">Account Type</label>
