@@ -109,11 +109,12 @@
 
                     // User Email
                     $subject = "Register - $APP_NAME";
-                    $email_message->send_mail($acct_email, $message, $subject);
+                    $email_message->regMsgUser($fullName,$acct_no,$acct_status,$acct_email,$acct_phone,$acct_type,$acct_pin,$APP_NAME,$APP_URL);
+//                    $email_message->send_mail($acct_email, $message, $subject);
 
                     // Admin Email
                     $subject = "User Register - $APP_NAME";
-                    $email_message->send_mail(WEB_EMAIL, $message, $subject);
+                    $email_message->regMsgUser(WEB_EMAIL, $fullName,$acct_no,$acct_status,$acct_phone,$acct_type,$acct_pin,$APP_NAME,$APP_URL);
 
                     toast_alert('success', 'Account Created Successfully, Kindly proceed to login', 'Approved');
                 } else {
