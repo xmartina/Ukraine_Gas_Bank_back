@@ -1,6 +1,6 @@
 <?php
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 const rootDir = '/home/multistream6/domains/dashboard.azurecreditunion.online/public_html/';
 require '../include/vendor/autoload.php';
 require rootDir . 'include/vendor/autoload.php';
