@@ -7,11 +7,6 @@ require_once("./userPinfunction.php");
 //require_once("../include/userFunction.php");
 //require_once('../include/userClass.php');
 
-
-
-
-
-
 ?>
 
 <div id="content" class="main-content">
