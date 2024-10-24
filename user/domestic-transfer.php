@@ -86,10 +86,10 @@ require_once("./userPinfunction.php");
 
                                             <div class="col-md-6">
                                                 <div class="form-group mb-4 mt-4">
-                                                    <label for="">Beneficiary Account No</label>
+                                                    <label for="">Beneficiary Account Number</label>
                                                     <div class="input-group ">
                                                         <input type="number" class="form-control" name="acct_number"
-                                                            placeholder="Beneficiary Account Name"
+                                                            placeholder="Beneficiary Account Number"
                                                             aria-label="notification" aria-describedby="basic-addon1"
                                                             required>
                                                     </div>
