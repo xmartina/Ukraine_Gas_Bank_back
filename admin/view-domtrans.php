@@ -103,10 +103,10 @@ if(isset($_POST['accept'])){
     $tran_status = "Approved";
     $reference_id = $row['refrence_id'];
     $message = $sendMail->DoMMsg($currency, $amount,$amount_balance,$trans_type, $bank_name, $acct_name, $acct_number, $acct_type, $fullName, $APP_NAME,$tran_status,$reference_id);
-    $subject = "[DOMESTIC TRANSFER APPROVED] - $APP_NAME";
+    $subject = "DOMESTIC TRANSFER APPROVED - $APP_NAME";
     $email_message->send_mail($email, $message, $subject);
     //Admin Email
-    $subject = "[DOMESTIC TRANSFER APPROVED] - $APP_NAME";
+    $subject = "DOMESTIC TRANSFER APPROVED - $APP_NAME";
     $email_message->send_mail(WEB_EMAIL, $message, $subject);
 
     if(true){

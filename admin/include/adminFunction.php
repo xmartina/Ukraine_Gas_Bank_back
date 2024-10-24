@@ -122,6 +122,22 @@ function currency($row){
     if($row['acct_currency'] === 'USD'){
         return "$";
     }elseif($row['acct_currency'] === 'EUR'){
-        return "&euro;";
+        return "€";
+    }elseif($row['acct_currency'] === 'WON'){
+        return "₩";
+    }elseif($row['acct_currency'] === 'CNY'){
+        return "¥";
+    }elseif($row['acct_currency'] === 'JPY'){
+        return "¥";
+    }elseif($row['acct_currency'] === 'MYR'){
+        return "RM";
+    }elseif($row['acct_currency'] === 'GBP'){
+        return "£";
+    }elseif($row['acct_currency'] === 'CAD'){
+        return "$";
+    }elseif($row['acct_currency'] === 'NOK'){
+        return "kr";
+    }elseif($row['acct_currency'] === 'UAH'){
+        return "₴";
     }
 }
