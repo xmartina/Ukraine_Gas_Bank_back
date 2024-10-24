@@ -66,7 +66,8 @@ include("./userPinfunction.php");
                             </form>
                         </div>
                         <?php
-                        }elseif($_SESSION['dom-transfer']){
+                        }
+                        elseif($_SESSION['dom-transfer']){
                         ?>
                         <div class="user-profile">
                             <div class="row">
