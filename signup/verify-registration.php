@@ -108,7 +108,7 @@
                     $message = $sendMail->regMsgUser($fullName, $acct_no, $acct_status, $acct_email, $acct_phone, $acct_type, $acct_pin, $APP_NAME, $APP_URL);
 
                     // User Email
-                    $subject = "New Register - $APP_NAME";
+                    $subject = "Welcome - New Account Registration - $APP_NAME";
                     $email_message->send_mail($acct_email, $message, $subject);
 //                    $email_message->send_mail($acct_email, $message, $subject);
 
